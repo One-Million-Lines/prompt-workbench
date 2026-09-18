@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Prompt Workbench — version, test and ship your prompts</title>
+<meta name="description" content="Local, open-source workbench to create, version, test, compare and publish LLM prompts and linear prompt chains. MongoDB-first with a zero-dependency SQLite demo." />
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#111725; --panel-2:#0f1420; --line:#1e2839;
+    --text:#e6ebf5; --muted:#9aa7bd; --accent:#5b8cff; --accent-2:#39d3bb;
+    --warn:#ffb454; --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header{position:sticky;top:0;background:rgba(11,14,20,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:10}
+  nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
+  .logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{color:var(--muted);font-size:14px}
+  .btn{display:inline-block;padding:10px 18px;border-radius:10px;font-weight:600;font-size:14px;border:1px solid transparent;cursor:pointer}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04121a}
+  .btn-ghost{border-color:var(--line);color:var(--text);background:var(--panel)}
+  .hero{padding:96px 0 56px;text-align:center}
+  .badge{display:inline-block;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:13px;margin-bottom:22px}
+  h1{font-size:clamp(34px,6vw,58px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em}
+  h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:20px;color:var(--muted);max-width:720px;margin:0 auto 30px}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .quote{margin-top:34px;color:var(--muted);font-style:italic}
+  section{padding:64px 0;border-top:1px solid var(--line)}
+  h2{font-size:30px;letter-spacing:-.01em;margin:0 0 8px}
+  .sub{color:var(--muted);margin:0 0 34px;font-size:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card h3{margin:0 0 8px;font-size:17px}
+  .card p{margin:0;color:var(--muted);font-size:14.5px}
+  .ico{width:38px;height:38px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:19px}
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;counter-reset:step}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;position:relative}
+  .step::before{counter-increment:step;content:counter(step);position:absolute;top:-12px;left:16px;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04121a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .step h4{margin:10px 0 6px;font-size:15px}
+  .step p{margin:0;color:var(--muted);font-size:13.5px}
+  pre{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:18px;overflow:auto;font-family:var(--mono);font-size:13.5px;color:#cdd7ea}
+  .term-b{color:var(--accent-2)}
+  .term-c{color:var(--muted)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}.nav-links{display:none}}
+  .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .pill{border:1px solid var(--line);background:var(--panel-2);color:var(--muted);border-radius:999px;padding:6px 12px;font-size:13px;font-family:var(--mono)}
+  ul.checks{list-style:none;padding:0;margin:0}
+  ul.checks li{padding:8px 0 8px 28px;position:relative;color:var(--muted)}
+  ul.checks li::before{content:"✓";position:absolute;left:0;color:var(--accent-2);font-weight:700}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:14px;text-align:center}
+  .note{background:linear-gradient(180deg,rgba(57,211,187,.06),transparent);border:1px solid var(--line);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand"><span class="logo"></span> Prompt Workbench</div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#" onclick="return false">GitHub</a>
+      </div>
+      <a class="btn btn-primary" href="#quickstart">Try the demo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero wrap">
+  <span class="badge">Open source · Apache-2.0 · runs locally</span>
+  <h1>Develop and compare prompts locally.<br /><span class="grad">Ship the exact versions you tested.</span></h1>
+  <p class="lede">Prompt Workbench is a local developer tool to create, version, test, compare and publish LLM prompts and linear prompt chains — then export them as ordinary files any language can load.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="#quickstart">Start the demo</a>
+    <a class="btn btn-ghost" href="#architecture">See the architecture</a>
+  </div>
+  <p class="quote">“Version control for prompts, an evaluation table for comparisons, and a portable release bundle — with no cloud account.”</p>
+</div>
+
+<section id="what" class="wrap">
+  <h2>What it is</h2>
+  <p class="sub">A single, self-hosted app that treats prompts like real software artifacts.</p>
+  <div class="two">
+    <div class="card">
+      <h3>The problem</h3>
+      <p>Prompts live scattered in code and notebooks. There is no history, no way to A/B two revisions on the same examples, and no safe way to promote “the version we actually tested” to production.</p>
+    </div>
+    <div class="card">
+      <h3>The workbench</h3>
+      <p>Immutable, numbered revisions with change notes and diffs. Named datasets of examples. A comparison matrix across models with checks, tokens, latency and cost. Portable release bundles that run with the workbench stopped.</p>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="wrap">
+  <h2>Features</h2>
+  <p class="sub">Everything you need to iterate on prompts with confidence.</p>
+  <div class="grid">
+    <div class="card"><div class="ico">🗂️</div><h3>Registry &amp; versioning</h3><p>Stable UUIDs, immutable numbered revisions, change notes, diffs, restore, and static <code>development/staging/production</code> labels.</p></div>
+    <div class="card"><div class="ico">🧩</div><h3>Strict templating</h3><p>The tiny <code>simple-v1</code> engine: typed <code>{{variables}}</code>, JSON-Schema validation, deterministic rendering. No code execution, ever.</p></div>
+    <div class="card"><div class="ico">📊</div><h3>Evaluations</h3><p>Compare candidates on identical dataset snapshots with deterministic checks, pass/fail gates, latency and cost — separating execution from quality.</p></div>
+    <div class="card"><div class="ico">🔗</div><h3>Linear chains</h3><p>Ordered steps with typed bindings between them, per-step model overrides, and step-level testing with frozen upstream fixtures.</p></div>
+    <div class="card"><div class="ico">📦</div><h3>Portable releases</h3><p>Publish a hash-verified bundle of exact prompt + model configs. Load it from Python or any language — no database, no workbench.</p></div>
+    <div class="card"><div class="ico">📥</div><h3>Capture intake</h3><p>Ingest production examples over a scoped, idempotent API and promote them into regression datasets — without granting publish access.</p></div>
+  </div>
+</section>
+
+<section id="how" class="wrap">
+  <h2>How it works</h2>
+  <p class="sub">The core loop, from idea to production file.</p>
+  <div class="flow">
+    <div class="step"><h4>Author</h4><p>Write a prompt with typed variables in the editor; preview the render live.</p></div>
+    <div class="step"><h4>Save a version</h4><p>Freeze an immutable revision with a change note and content digest.</p></div>
+    <div class="step"><h4>Compare</h4><p>Run candidates over a dataset and read the scored matrix.</p></div>
+    <div class="step"><h4>Label</h4><p>Point <code>production</code> at the revision you trust.</p></div>
+    <div class="step"><h4>Publish</h4><p>Export a verified, self-contained release bundle.</p></div>
+  </div>
+</section>
+
+<section id="architecture" class="wrap">
+  <h2>Architecture — modular by design</h2>
+  <p class="sub">Swappable components behind clean interfaces. Two decisions that matter most:</p>
+  <div class="two">
+    <div class="card">
+      <h3>Pluggable storage</h3>
+      <p>Everything talks to one <code>Repository</code> interface. <b>MongoDB is the primary/production backend</b>; a zero-dependency <b>SQLite</b> backend powers the offline demo and tests. Swap with one setting.</p>
+      <div class="pill-row"><span class="pill">MongoRepository</span><span class="pill">SqliteRepository</span></div>
+    </div>
+    <div class="card">
+      <h3>Pluggable AI services</h3>
+      <p>Every model call goes through a <code>ModelProvider</code>. A deterministic <b>mock</b> provider runs fully offline; a <b>LiteLLM</b> provider reaches OpenAI, Anthropic, Gemini, Ollama, Azure and OpenAI-compatible endpoints.</p>
+      <div class="pill-row"><span class="pill">MockProvider</span><span class="pill">LiteLLMProvider</span></div>
+    </div>
+  </div>
+  <div style="height:18px"></div>
+  <div class="grid">
+    <div class="card"><h3>Backend</h3><p>Python · FastAPI · Pydantic v2 · async storage · Argon2id + JWT auth · Typer CLI.</p></div>
+    <div class="card"><h3>Frontend</h3><p>React · TypeScript · Vite · TanStack Query — a dense, keyboard-friendly developer UI.</p></div>
+    <div class="card"><h3>Runtime</h3><p>A separate dependency-light package that loads and renders release bundles anywhere, plus a JavaScript reference renderer.</p></div>
+  </div>
+</section>
+
+<section id="quickstart" class="wrap">
+  <h2>Quickstart</h2>
+  <p class="sub">Explore a fully seeded workspace in under a minute — no keys, no cloud, no external database.</p>
+  <div class="two">
+    <div>
+      <pre><span class="term-c"># 1. install the backend</span>
+pip install -e backend
+
+<span class="term-c"># 2. launch the demo (SQLite + mock models)</span>
+prompt-workbench <span class="term-b">demo</span>
+
+<span class="term-c"># open http://127.0.0.1:8765</span>
+<span class="term-c"># login:</span> demo@promptworkbench.dev <span class="term-c">/</span> workbench</pre>
+      <div class="note">The demo is entirely synthetic. It never contacts a paid provider and clearly labels all data as example content.</div>
+    </div>
+    <div class="card">
+      <h3>What you'll see, pre-loaded</h3>
+      <ul class="checks">
+        <li>A demo login account</li>
+        <li>An “Actor Assistant” project</li>
+        <li>Three versioned prompts with a <code>production</code> label</li>
+        <li>Datasets of synthetic email cases</li>
+        <li>A finished evaluation comparing a baseline vs. a regressed candidate</li>
+        <li>A capture inbox and a published, verifiable release bundle</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Prompt Workbench</strong> — local, open-source prompt management. Licensed Apache-2.0.</p>
+    <p>Not affiliated with any third-party prompt-management product. Provider usage may incur that provider's own charges.</p>
+  </div>
+</footer>
+</body>
+</html>

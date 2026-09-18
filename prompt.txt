@@ -1,0 +1,9 @@
+we work on prompt-workbench project. This is going to be an open-source project I will use personally for my other projects but also fully open-source for anyone to use.                                 
+is more like a prompt management, versioning and related. Only that                                                                                                                                       
+                                                                                                                                                                                                          
+It has a specifications file in the directory, a .md file.                                                                                                                                                
+Read and understand the file completely. Then create tasks list and follow the best practices in the industry to get this built. Use latest modules/packages.                                             
+Check how other projects are made if you need that, those in the same folder. Structure the directory to manage the backend and front-end correctly. Also create a simple website with a one              
+index.html page to present what is this about.                                                                                                                                                            
+                                                                                                                                                                                                          
+Now go back to work and don't stop until this is properly finished.  

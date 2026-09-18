@@ -1,0 +1,29 @@
+services:
+  prompt-workbench:
+    build: .
+    image: prompt-workbench:latest
+    # Loopback-only port mapping by default.
+    ports:
+      - "127.0.0.1:8765:8765"
+    environment:
+      PROMPT_WORKBENCH_PROVIDER_MODE: "mock"
+      PROMPT_WORKBENCH_STORAGE_BACKEND: "sqlite"
+      # For MongoDB, set:
+      #   PROMPT_WORKBENCH_STORAGE_BACKEND: "mongo"
+      #   PROMPT_WORKBENCH_MONGO_URI: "mongodb://mongo:27017"
+    # Provider credentials come from an env file (never commit real secrets).
+    env_file:
+      - .env.example
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+
+  # Optional MongoDB for the primary backend. Uncomment and switch the env above.
+  # mongo:
+  #   image: mongo:7
+  #   volumes:
+  #     - mongo-data:/data/db
+  #   restart: unless-stopped
+
+# volumes:
+#   mongo-data:

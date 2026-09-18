@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prompt-workbench/schemas/bundle.schema.json",
+  "title": "Release bundle manifest (format_version 1)",
+  "type": "object",
+  "required": ["format_version", "release_id", "entrypoints", "files", "semantic_sha256"],
+  "properties": {
+    "format_version": { "const": 1 },
+    "template_engine": { "const": "simple-v1" },
+    "release_id": { "type": "string" },
+    "project_id": { "type": "string" },
+    "name": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "entrypoints": {
+      "type": "object",
+      "required": ["prompts", "chains"],
+      "properties": {
+        "prompts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["slug", "revision", "path"],
+            "properties": {
+              "slug": { "type": "string" },
+              "revision": { "type": "integer" },
+              "path": { "type": "string" }
+            }
+          }
+        },
+        "chains": { "type": "object" }
+      }
+    },
+    "required_connections": { "type": "array", "items": { "type": "string" } },
+    "files": { "type": "object", "additionalProperties": { "type": "string" } },
+    "semantic_sha256": { "type": "string" }
+  }
+}

@@ -1,0 +1,13 @@
+Prompt Workbench
+Copyright 2026 Prompt Workbench contributors
+
+This product includes software developed as an open-source project and licensed
+under the Apache License, Version 2.0 (see LICENSE).
+
+This software integrates optional third-party libraries at runtime (for example
+FastAPI, Pydantic, SQLAlchemy/aiosqlite, motor, PyJWT, argon2-cffi, jsonschema,
+Typer, and optionally LiteLLM), each distributed under its own license. Their use
+does not imply any affiliation or endorsement.
+
+This project is not affiliated with, nor endorsed by, any third-party
+prompt-management product referenced in its design documentation.

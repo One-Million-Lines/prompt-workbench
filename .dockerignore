@@ -1,0 +1,12 @@
+# Do not send the build context into large/irrelevant paths.
+.venv/
+**/__pycache__/
+**/*.pyc
+data/
+demo-data/
+*.sqlite3*
+frontend/node_modules/
+frontend/dist/
+.git/
+.pytest_cache/
+*.zip

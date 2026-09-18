@@ -1,0 +1,63 @@
+{
+  "canonical": [
+    { "value": { "b": 1, "a": 2 }, "expected": "{\"a\":2,\"b\":1}" },
+    { "value": [1, 2, 3], "expected": "[1,2,3]" },
+    { "value": { "z": [true, false, null] }, "expected": "{\"z\":[true,false,null]}" },
+    { "value": "he said \"hi\"\nline", "expected": "\"he said \\\"hi\\\"\\nline\"" },
+    { "value": "back\\slash", "expected": "\"back\\\\slash\"" },
+    { "value": "unicode: café → 世界", "expected": "\"unicode: café → 世界\"" },
+    { "value": { "nested": { "k": [ { "y": 1, "x": 2 } ] } }, "expected": "{\"nested\":{\"k\":[{\"x\":2,\"y\":1}]}}" },
+    { "value": 9007199254740991, "expected": "9007199254740991" }
+  ],
+  "render": [
+    {
+      "name": "simple-substitution",
+      "template": "Hello {{ name }}, you have {{count}} items.",
+      "declared": ["name", "count"],
+      "values": { "name": "Ada", "count": 3 },
+      "expected": "Hello Ada, you have 3 items."
+    },
+    {
+      "name": "string-inserted-verbatim-with-quotes",
+      "template": "value={{ v }}",
+      "declared": ["v"],
+      "values": { "v": "he said \"hi\"" },
+      "expected": "value=he said \"hi\""
+    },
+    {
+      "name": "non-string-canonical-json",
+      "template": "obj={{ payload }}",
+      "declared": ["payload"],
+      "values": { "payload": { "b": 1, "a": [true, null] } },
+      "expected": "obj={\"a\":[true,null],\"b\":1}"
+    },
+    {
+      "name": "literal-escape",
+      "template": "keep {{!literal}} and use {{ x }}",
+      "declared": ["x"],
+      "values": { "x": "X" },
+      "expected": "keep {{literal}} and use X"
+    },
+    {
+      "name": "single-pass-no-recursion",
+      "template": "{{ a }}",
+      "declared": ["a"],
+      "values": { "a": "{{ b }}" },
+      "expected": "{{ b }}"
+    },
+    {
+      "name": "whitespace-in-braces",
+      "template": "{{name}} == {{  name  }}",
+      "declared": ["name"],
+      "values": { "name": "N" },
+      "expected": "N == N"
+    },
+    {
+      "name": "unicode-value",
+      "template": "greeting: {{ g }}",
+      "declared": ["g"],
+      "values": { "g": "café 世界" },
+      "expected": "greeting: café 世界"
+    }
+  ]
+}

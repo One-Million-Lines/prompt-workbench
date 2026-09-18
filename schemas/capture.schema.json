@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prompt-workbench/schemas/capture.schema.json",
+  "title": "Capture ingestion payload (schema_version 1)",
+  "type": "object",
+  "required": ["schema_version", "project_id", "source", "mode"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "project_id": { "type": "string" },
+    "source": { "type": "string" },
+    "mode": { "enum": ["structured", "rendered"] },
+    "external_event_id": { "type": ["string", "null"] },
+    "occurred_at": { "type": ["string", "null"], "format": "date-time" },
+    "prompt_ref": {
+      "type": ["object", "null"],
+      "properties": {
+        "prompt_id": { "type": "string" },
+        "slug": { "type": "string" },
+        "revision": { "type": "integer" },
+        "release_id": { "type": "string" }
+      }
+    },
+    "inputs": { "type": ["object", "null"] },
+    "rendered_messages": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["role", "content"],
+        "properties": { "role": { "type": "string" }, "content": { "type": "string" } }
+      }
+    },
+    "output": { "type": ["object", "null"] },
+    "model": { "type": ["object", "null"] },
+    "usage": { "type": ["object", "null"] },
+    "duration_ms": { "type": ["integer", "null"] },
+    "metadata": { "type": "object" },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

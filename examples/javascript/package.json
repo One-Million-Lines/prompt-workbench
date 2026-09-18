@@ -1,0 +1,10 @@
+{
+  "name": "prompt-workbench-js-reference",
+  "version": "1.0.0",
+  "description": "JavaScript reference loader/renderer and conformance fixtures for Prompt Workbench bundles.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test.mjs"
+  }
+}

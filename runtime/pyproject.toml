@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prompt-workbench-runtime"
+version = "1.0.0"
+description = "Portable, dependency-light loader and renderer for Prompt Workbench release bundles."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+
+# Core render/load has NO required third-party dependencies.
+dependencies = []
+
+[project.optional-dependencies]
+# Optional execution of prompts/chains against real models.
+litellm = ["litellm>=1.44"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
